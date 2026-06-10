@@ -1,0 +1,15 @@
+# Node
+node_modules/
+*.log
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+.vercel/
+
+# Database (backend)
+backend/data/

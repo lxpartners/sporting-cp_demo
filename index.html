@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#005C42">
+  <title>Sporting CP</title>
+
+  <!-- QR Code library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <!-- App styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app">
+
+<div class="screen active" id="screen-login">
+  <div class="aw">
+    <div class="at">
+      <div class="alo"><img src="SCP_LOGO_PLACEHOLDER" alt="Sporting CP"></div>
+      <div class="atit">Sporting CP</div>
+      <div class="asub">Acede à tua conta de sócio</div>
+    </div>
+    <div class="af">
+      <div class="field"><label>Email</label><input id="login-email" type="email" placeholder="o.teu@email.pt" value="andre@demo.pt"></div>
+      <div class="field"><label>Password</label><input id="login-pass" type="password" placeholder="Password" value="sporting123"></div>
+      <button class="btn btn-p" onclick="doLogin()">Entrar</button>
+      <p class="alink">Não tens conta? <button onclick="showScreen('register')">Regista-te</button></p>
+      <div class="dbox"><div class="dbox-t">Contas de demo · Password: sporting123</div><div class="dbox-x">andre@demo.pt &nbsp;·&nbsp; joao@demo.pt &nbsp;·&nbsp; rui@demo.pt</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-register">
+  <div class="aw">
+    <div class="at" style="padding-top:60px">
+      <div class="alo"><img src="SCP_LOGO_PLACEHOLDER" alt="Sporting CP"></div>
+      <div class="atit">Torna-te Sócio</div>
+      <div class="asub">Cria a tua conta Sporting CP</div>
+    </div>
+    <div class="af">
+      <div class="field"><label>Nome completo</label><input id="reg-name" type="text" placeholder="O teu nome"></div>
+      <div class="field"><label>Email</label><input id="reg-email" type="email" placeholder="o.teu@email.pt"></div>
+      <div class="field"><label>Password</label><input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres"></div>
+      <button class="btn btn-p" onclick="doRegister()">Criar Conta</button>
+      <p class="alink">Já tens conta? <button onclick="showScreen('login')">Entrar</button></p>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-home">
+  <div class="hhero">
+    <div class="htop">
+      <div><div class="hgr">Bem-vindo,</div><div class="hnm" id="home-firstname">André 👋</div></div>
+      <div class="hlog" onclick="goTab('profile')"><img src="SCP_LOGO_PLACEHOLDER" alt="SCP"></div>
+    </div>
+    <div id="home-member-card"></div>
+  </div>
+  <div class="scroll">
+    <div class="slbl" style="padding-top:16px">Ações Rápidas</div>
+    <div class="qa-grid">
+      <button class="qa" onclick="goTab('tickets')"><div class="qa-ic">🎫</div><div class="qa-lb">Bilhetes</div></button>
+      <button class="qa" onclick="goTab('marketplace')"><div class="qa-ic">🏪</div><div class="qa-lb">Marketplace</div></button>
+      <button class="qa" onclick="showToast('Em breve!')"><div class="qa-ic">🛒</div><div class="qa-lb">Comprar</div></button>
+      <button class="qa" onclick="goTab('profile')"><div class="qa-ic">💳</div><div class="qa-lb">Cartão</div></button>
+    </div>
+    <div class="slbl">Próximos Jogos <button onclick="showToast('Em breve!')">VER TODOS</button></div>
+    <div id="home-events"></div>
+  </div>
+  <div class="tabs">
+    <button class="tab on" onclick="goTab('home')"><div class="ti">🏠</div><div class="tl">Início</div></button>
+    <button class="tab" onclick="goTab('tickets')"><div class="ti">🎫</div><div class="tl">Bilhetes</div></button>
+    <button class="tab" onclick="goTab('marketplace')"><div class="ti">🏪</div><div class="tl">Marketplace</div></button>
+    <button class="tab" onclick="goTab('profile')"><div class="ti">👤</div><div class="tl">Perfil</div></button>
+  </div>
+</div>
+
+<div class="screen" id="screen-tickets">
+  <div class="page-head"><h1>Os Meus Bilhetes</h1><p id="tickets-count"></p></div>
+  <div class="scroll" style="padding-top:12px" id="tickets-list"></div>
+  <div class="tabs">
+    <button class="tab" onclick="goTab('home')"><div class="ti">🏠</div><div class="tl">Início</div></button>
+    <button class="tab on" onclick="goTab('tickets')"><div class="ti">🎫</div><div class="tl">Bilhetes</div></button>
+    <button class="tab" onclick="goTab('marketplace')"><div class="ti">🏪</div><div class="tl">Marketplace</div></button>
+    <button class="tab" onclick="goTab('profile')"><div class="ti">👤</div><div class="tl">Perfil</div></button>
+  </div>
+</div>
+
+<div class="screen" id="screen-ticket-detail">
+  <div class="back-head"><button onclick="goTab('tickets')">‹</button><span>Bilhete Digital</span></div>
+  <div class="scroll" style="padding-bottom:24px"><div class="tdw" id="ticket-detail-body"></div></div>
+</div>
+
+<div class="screen" id="screen-transfer">
+  <div class="back-head"><button id="transfer-back-btn">‹</button><span>Transferir Bilhete</span></div>
+  <div class="scroll" style="padding:16px">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Pesquisa por nome, email ou número de sócio</p>
+    <div class="field"><input id="transfer-query" type="text" placeholder="Nome, email ou nº de sócio..." oninput="searchMembers(this.value)"></div>
+    <div id="transfer-results"></div>
+    <div id="transfer-confirm" style="display:none"></div>
+    <button class="btn btn-p" id="transfer-submit-btn" style="display:none;margin-top:4px" onclick="doTransfer()">Confirmar Transferência</button>
+    <div class="inote">🔒 O bilhete fica registado no nome do destinatário. O QR original é invalidado imediatamente.</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-sell">
+  <div class="back-head"><button id="sell-back-btn">‹</button><span>Vender Bilhete</span></div>
+  <div class="scroll" style="padding:16px">
+    <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Marketplace oficial — só sócios podem comprar</p>
+    <div class="wnote"><span style="font-size:20px;flex-shrink:0">ℹ️</span><p>O preço não pode exceder o valor original. O clube retém 5% de comissão.</p></div>
+    <div style="font-size:12px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px">Preço de venda</div>
+    <div class="prow"><span class="psym">€</span><input class="pbig" id="sell-price-input" type="number" value="35" oninput="updateSellBreakdown()"></div>
+    <p id="sell-price-error" style="color:#C0392B;font-size:12px;margin-bottom:12px;display:none"></p>
+    <div class="bkdn" id="sell-breakdown"></div>
+    <button class="btn btn-g" id="sell-submit-btn" onclick="doSell()">📢 &nbsp;Publicar no Marketplace</button>
+  </div>
+</div>
+
+<div class="screen" id="screen-marketplace">
+  <div class="page-head"><h1>Marketplace</h1><p>Bilhetes à venda por sócios</p></div>
+  <div class="scroll" style="padding-top:12px" id="marketplace-list"></div>
+  <div class="tabs">
+    <button class="tab" onclick="goTab('home')"><div class="ti">🏠</div><div class="tl">Início</div></button>
+    <button class="tab" onclick="goTab('tickets')"><div class="ti">🎫</div><div class="tl">Bilhetes</div></button>
+    <button class="tab on" onclick="goTab('marketplace')"><div class="ti">🏪</div><div class="tl">Marketplace</div></button>
+    <button class="tab" onclick="goTab('profile')"><div class="ti">👤</div><div class="tl">Perfil</div></button>
+  </div>
+</div>
+
+<div class="screen" id="screen-profile">
+  <div class="prh" id="profile-header"></div>
+  <div class="scroll">
+    <div class="stgrid" id="profile-stats"></div>
+    <div class="mnu">
+      <div class="mrow" onclick="goTab('tickets')"><span class="mic">🎫</span><span class="mtx">Os Meus Bilhetes</span><span class="mar">›</span></div>
+      <div class="mrow" onclick="goTab('marketplace')"><span class="mic">🏪</span><span class="mtx">Marketplace</span><span class="mar">›</span></div>
+      <div class="mrow" onclick="showToast('Em breve!')"><span class="mic">📜</span><span class="mtx">Histórico de Transferências</span><span class="mar">›</span></div>
+      <div class="mrow" onclick="showToast('Em breve!')"><span class="mic">⚙️</span><span class="mtx">Definições</span><span class="mar">›</span></div>
+    </div>
+    <div style="padding:0 16px 12px"><button class="btn btn-red" onclick="doLogout()">Terminar Sessão</button></div>
+    <p style="text-align:center;color:#CCC;font-size:10px;padding-bottom:32px;letter-spacing:1.5px;text-transform:uppercase">Sporting CP · Demo</p>
+  </div>
+  <div class="tabs">
+    <button class="tab" onclick="goTab('home')"><div class="ti">🏠</div><div class="tl">Início</div></button>
+    <button class="tab" onclick="goTab('tickets')"><div class="ti">🎫</div><div class="tl">Bilhetes</div></button>
+    <button class="tab" onclick="goTab('marketplace')"><div class="ti">🏪</div><div class="tl">Marketplace</div></button>
+    <button class="tab on" onclick="goTab('profile')"><div class="ti">👤</div><div class="tl">Perfil</div></button>
+  </div>
+</div>
+
+<div class="screen" id="screen-success"><div class="sucb" id="success-body"></div></div>
+
+<div class="toast" id="toast"></div>
+
+
+
+</div>
+
+<!-- ── Scripts (ordem importa: logo → dados → app → render) ── -->
+<script src="js/logo.js"></script>
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/render.js"></script>
+
+<script>
+  // Substituir placeholder do logo após carregar logo.js
+  document.querySelectorAll('img[src="SCP_LOGO_PLACEHOLDER"]').forEach(img => {
+    img.src = SCP_LOGO;
+  });
+</script>
+
+</body>
+</html>

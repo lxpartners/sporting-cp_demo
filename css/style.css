@@ -1,0 +1,338 @@
+/* ─────────────────────────────────────────────────────────────
+   style.css  —  Estilos globais da app Sporting CP
+   Organizado em secções: tokens, layout, componentes, ecrãs
+   ───────────────────────────────────────────────────────────── */
+
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --g1:#008863;--g2:#005C42;--g3:#003D2E;--g4:#E6F4EF;
+  --gold:#F0A500;--gold-lt:#FFF3CC;
+  --white:#FFF;--off:#F5F5F5;--text:#1A1A1A;--muted:#6B7280;
+  --border:#E5E7EB;--r:12px;--sh:0 2px 12px rgba(0,0,0,.08);--shm:0 4px 24px rgba(0,0,0,.13)
+}
+html,body{height:100%;background:#0D1117}
+body{display:flex;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:var(--text)}
+#app{width:100%;max-width:430px;min-height:100vh;background:var(--off);display:flex;flex-direction:column}
+/* ── SCREENS ────────────────────────────────────────────────────────────────── */
+.screen{display:none;flex-direction:column;flex:1;overflow:hidden}
+.screen.active{display:flex}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.scroll::-webkit-scrollbar{display:none}
+
+/* STATUS */
+/* ── STATUS BAR ─────────────────────────────────────────────────────────────── */
+.status{background:var(--g3);padding:14px 20px 8px;display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:rgba(255,255,255,.7);flex-shrink:0}
+
+/* TABS */
+/* ── TAB BAR ────────────────────────────────────────────────────────────────── */
+.tabs{background:var(--white);border-top:1px solid var(--border);display:flex;flex-shrink:0;padding-bottom:16px}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 0 4px;border:none;background:none;cursor:pointer;color:var(--muted);position:relative}
+.tab.on{color:var(--g1)}
+.tab.on::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:28px;height:3px;background:var(--g1);border-radius:0 0 3px 3px}
+.ti{font-size:22px;line-height:1}.tl{font-size:10px;font-weight:700;letter-spacing:.3px}
+
+/* HEADERS */
+/* ── PAGE HEADERS ───────────────────────────────────────────────────────────── */
+.page-head{background:var(--g2);padding:52px 20px 18px;color:#fff;flex-shrink:0}
+.page-head h1{font-size:24px;font-weight:900;letter-spacing:-.3px}
+.page-head p{font-size:13px;opacity:.65;margin-top:3px}
+.back-head{background:var(--g2);padding:52px 20px 16px;display:flex;align-items:center;gap:12px;color:#fff;flex-shrink:0}
+.back-head button{background:none;border:none;color:#fff;font-size:28px;line-height:1;cursor:pointer;padding:0;margin-left:-4px}
+.back-head span{font-size:17px;font-weight:700}
+
+/* BUTTONS */
+/* ── BUTTONS ────────────────────────────────────────────────────────────────── */
+.btn{border:none;border-radius:var(--r);padding:15px;font-size:15px;font-weight:700;cursor:pointer;width:100%;letter-spacing:.2px;transition:opacity .15s}
+.btn:active{opacity:.82}
+.btn-p{background:var(--g1);color:#fff}
+.btn-g{background:var(--gold);color:var(--g3)}
+.btn-o{background:transparent;color:var(--g1);border:2px solid var(--g1)}
+.btn-red{background:#fff;color:#C0392B;border:1.5px solid #FADBD8}
+.sm{padding:11px 16px;font-size:13px;border-radius:10px}
+
+/* FORM */
+/* ── FORM FIELDS ────────────────────────────────────────────────────────────── */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.field input{width:100%;padding:14px;border:1.5px solid var(--border);border-radius:var(--r);font-size:15px;color:var(--text);background:#fff;outline:none;-webkit-appearance:none;transition:border-color .2s}
+.field input:focus{border-color:var(--g1)}
+
+/* CARD */
+.card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin-bottom:12px}
+
+/* MEMBER CARD */
+/* ── CARTÃO DE SÓCIO ────────────────────────────────────────────────────────── */
+.mc{background:linear-gradient(145deg,var(--g3),var(--g2) 50%,#009B71);border-radius:18px;padding:22px;color:#fff;box-shadow:0 8px 32px rgba(0,136,99,.4);position:relative;overflow:hidden;margin:0 16px 20px}
+.mc::after{content:"";position:absolute;right:-40px;top:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)}
+.mc-r{display:flex;justify-content:space-between;align-items:flex-start}
+.mc-lbl{font-size:9px;font-weight:800;opacity:.55;letter-spacing:2px;text-transform:uppercase}
+.mc-num{font-size:13px;font-family:monospace;opacity:.8;margin-top:3px;letter-spacing:1px}
+.mc-badge{padding:5px 12px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:.5px}
+.mc-name{font-size:21px;font-weight:900;margin:12px 0 10px;letter-spacing:-.3px}
+.mc-since{font-size:11px;opacity:.5}
+.mc-pts{font-size:26px;font-weight:900;color:var(--gold);line-height:1}
+.mc-ptslbl{font-size:9px;opacity:.55;text-transform:uppercase;letter-spacing:1px;margin-top:1px}
+
+/* SECTION */
+.slbl{font-size:10px;font-weight:900;color:var(--g1);text-transform:uppercase;letter-spacing:2.5px;padding:18px 16px 8px;display:flex;justify-content:space-between;align-items:center}
+.slbl button{font-size:10px;font-weight:800;color:var(--g1);background:none;border:none;cursor:pointer;letter-spacing:1.5px}
+
+/* QUICK ACTIONS */
+.qa-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:0 16px 4px}
+.qa{display:flex;flex-direction:column;align-items:center;gap:5px;background:none;border:none;cursor:pointer}
+.qa-ic{width:58px;height:58px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:var(--sh)}
+.qa-lb{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.2px}
+
+/* GAME CARD */
+/* ── GAME CARD (JOGO) ───────────────────────────────────────────────────────── */
+.gc{background:#fff;border-radius:var(--r);padding:14px;margin:0 16px 10px;display:flex;align-items:center;gap:12px;border-left:3px solid var(--border);box-shadow:var(--sh);cursor:pointer}
+.gc.has{border-left-color:var(--g1);background:#F6FFFC}
+.db{text-align:center;min-width:40px}
+.dd{font-size:24px;font-weight:900;color:var(--g1);line-height:1}
+.dm{font-size:9px;font-weight:800;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.vd{width:1px;height:44px;background:var(--border)}
+.gi{flex:1;min-width:0}
+.gim{font-size:14px;font-weight:800;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gix{font-size:11px;color:var(--muted);margin-top:2px}
+.gic{font-size:10px;color:var(--g1);font-weight:700;margin-top:2px}
+.hb{background:var(--g1);color:#fff;padding:4px 8px;border-radius:6px;font-size:9px;font-weight:800;white-space:nowrap;text-transform:uppercase;letter-spacing:.5px}
+
+/* TICKET CARD */
+/* ── TICKET CARD (LISTA) ────────────────────────────────────────────────────── */
+.tc{background:#fff;border-radius:var(--r);overflow:hidden;margin:0 16px 12px;box-shadow:var(--sh);cursor:pointer}
+.tch{background:var(--g2);padding:14px 16px}
+.tcm{font-size:15px;font-weight:800;color:#fff}
+.tcx{font-size:11px;color:rgba(255,255,255,.7);margin-top:3px}
+.tcs{display:flex;background:var(--off);border-top:1px solid var(--border)}
+.tsf{flex:1;padding:10px;text-align:center}
+.tsl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.tsv{font-size:17px;font-weight:900;color:var(--text);margin-top:2px}
+.tht{padding:8px 16px;background:var(--g4);font-size:11px;color:var(--g1);font-weight:700;display:flex;align-items:center;gap:6px}
+
+/* TICKET DETAIL */
+/* ── TICKET DETAIL ──────────────────────────────────────────────────────────── */
+.tdw{background:#fff;border-radius:16px;overflow:hidden;margin:16px;box-shadow:var(--shm)}
+.tdh{background:var(--g2);padding:22px 20px}
+.tdb{display:inline-block;background:rgba(255,255,255,.15);color:rgba(255,255,255,.9);font-size:9px;font-weight:800;padding:4px 10px;border-radius:20px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.tdmt{font-size:20px;font-weight:900;color:#fff;margin-bottom:10px;line-height:1.2}
+.tdi{display:flex;flex-direction:column;gap:4px}
+.tdi span{font-size:12px;color:rgba(255,255,255,.8)}
+.tdsep{display:flex;align-items:center}
+.tdsep-c{width:20px;height:20px;border-radius:50%;background:var(--off);flex-shrink:0}
+.tdsep-l{flex:1;border-top:2px dashed var(--border)}
+.tdseat{display:flex;padding:16px 20px}
+.tdsf{flex:1;text-align:center}
+.tdsl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.tdsv{font-size:28px;font-weight:900;color:var(--text);margin-top:4px}
+.qrz{display:flex;flex-direction:column;align-items:center;padding:20px;border-top:1px solid var(--border)}
+#qr-canvas canvas,#qr-canvas img{border-radius:8px!important}
+.qref{margin-top:8px;font-size:10px;color:#B5B5B5;font-family:monospace;letter-spacing:.5px}
+.tdact{display:flex;gap:10px;padding:0 16px 16px}
+.tddisc{font-size:11px;color:var(--muted);text-align:center;padding:0 20px 16px;line-height:1.5}
+
+/* LISTING */
+/* ── LISTING CARD (MARKETPLACE) ─────────────────────────────────────────────── */
+.lc{background:#fff;border-radius:var(--r);overflow:hidden;margin:0 16px 12px;box-shadow:var(--sh)}
+.lch{padding:14px 16px 10px;border-bottom:1px solid var(--off)}
+.lcc{font-size:9px;font-weight:800;color:var(--g1);letter-spacing:2px;text-transform:uppercase;margin-bottom:3px}
+.lcm{font-size:15px;font-weight:900;color:var(--text)}
+.lcx{font-size:11px;color:var(--muted);margin-top:2px}
+.lcb{padding:14px 16px}
+.lcsrow{display:flex;margin-bottom:14px}
+.lcsf{flex:1;text-align:center}
+.lcsl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.lcsv{font-size:17px;font-weight:900;color:var(--text);margin-top:2px}
+.lcpr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
+.lcseller-l{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.lcseller-n{font-size:13px;font-weight:700;color:var(--text);margin-top:2px}
+.lcprice{font-size:30px;font-weight:900;color:var(--g1);line-height:1}
+.lcorig{font-size:12px;color:var(--muted);text-decoration:line-through;margin-top:2px}
+.svtag{background:var(--g4);color:var(--g1);padding:3px 8px;border-radius:6px;font-size:10px;font-weight:800;margin-left:8px}
+
+/* PROFILE */
+/* ── PROFILE ────────────────────────────────────────────────────────────────── */
+.prh{background:var(--g2);padding:52px 20px 28px;text-align:center}
+.prav{width:80px;height:80px;border-radius:40px;background:var(--gold);display:inline-flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:var(--g2);margin-bottom:12px;border:3px solid rgba(255,255,255,.2)}
+.prname{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.3px;margin-bottom:4px}
+.premail{font-size:13px;color:rgba(255,255,255,.6);margin-bottom:10px}
+.prtier{display:inline-block;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:900;letter-spacing:.5px}
+.stgrid{display:flex;gap:10px;padding:16px}
+.stc{flex:1;background:#fff;border-radius:var(--r);padding:14px;text-align:center;box-shadow:var(--sh)}
+.stv{font-size:14px;font-weight:900;color:var(--g1);margin-bottom:3px}
+.stl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.mnu{background:#fff;border-radius:var(--r);overflow:hidden;margin:0 16px 12px;box-shadow:var(--sh)}
+.mrow{display:flex;align-items:center;padding:15px 16px;border-bottom:1px solid var(--off);cursor:pointer}
+.mrow:last-child{border:none}
+.mic{font-size:20px;margin-right:14px}.mtx{flex:1;font-size:14px;font-weight:600;color:var(--text)}.mar{font-size:18px;color:#CCC}
+
+/* AUTH */
+/* ── AUTH (LOGIN / REGISTER) ────────────────────────────────────────────────── */
+.aw{background:var(--g2);flex:1;display:flex;flex-direction:column}
+.at{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px 24px 20px}
+.alo{width:100px;height:100px;display:flex;align-items:center;justify-content:center;margin-bottom:18px}
+.alo img{width:100px;height:100px;object-fit:contain}
+.atit{font-size:30px;font-weight:900;color:#fff;margin-bottom:4px;letter-spacing:-.5px}
+.asub{font-size:14px;color:rgba(255,255,255,.6);text-align:center}
+.af{background:#fff;border-radius:24px 24px 0 0;padding:28px 24px 36px}
+.alink{font-size:14px;color:var(--muted);text-align:center;margin-top:16px}
+.alink button{background:none;border:none;color:var(--g1);font-weight:700;cursor:pointer;font-size:14px}
+.dbox{background:var(--g4);border-radius:10px;padding:12px 14px;margin-top:16px;border-left:3px solid var(--g1)}
+.dbox-t{font-size:10px;font-weight:800;color:var(--g1);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.dbox-x{font-size:11px;color:var(--muted);font-family:monospace;line-height:1.6}
+
+/* TRANSFER */
+/* ── TRANSFER MEMBER SEARCH ─────────────────────────────────────────────────── */
+.mr{display:flex;align-items:center;gap:12px;background:#fff;padding:14px;border-radius:var(--r);margin-bottom:8px;border:1.5px solid var(--border);cursor:pointer;box-shadow:var(--sh)}
+.mr.sel{border-color:var(--g1);background:var(--g4)}
+.mrav{width:44px;height:44px;border-radius:22px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;flex-shrink:0}
+.mrn{font-size:15px;font-weight:700;color:var(--text)}.mrx{font-size:11px;color:var(--muted);margin-top:2px}
+.mrck{color:var(--g1);font-weight:800;margin-left:auto;font-size:18px}
+.cfbox{background:var(--g4);border-radius:var(--r);padding:16px;border:1.5px solid var(--g1);margin:16px 0}
+.cflbl{font-size:9px;font-weight:800;color:var(--g1);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px}
+.cfname{font-size:18px;font-weight:900;color:var(--text)}.cfsub{font-size:12px;color:var(--muted);margin-top:2px}
+.inote{background:var(--off);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--muted);line-height:1.6;margin-top:12px;border-left:3px solid var(--border)}
+.wnote{background:var(--gold-lt);border-radius:var(--r);padding:14px;display:flex;gap:12px;margin-bottom:20px;border-left:3px solid var(--gold)}
+.wnote p{font-size:13px;color:#7A5C00;line-height:1.5}
+
+/* SELL */
+/* ── SELL PRICE INPUT ───────────────────────────────────────────────────────── */
+.prow{display:flex;align-items:baseline;gap:8px;border-bottom:2px solid var(--g1);padding-bottom:10px;margin:12px 0}
+.psym{font-size:32px;font-weight:900;color:var(--muted)}
+.pbig{flex:1;font-size:48px;font-weight:900;color:var(--g1);border:none;outline:none;background:transparent;width:0}
+.pbig.over{color:#C0392B}
+.bkdn{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh);margin-bottom:16px}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--off)}
+.brow:last-child{border:none;background:var(--g4)}
+.bl{font-size:14px;color:var(--muted)}.bv{font-size:14px;font-weight:700;color:var(--text)}
+.brow:last-child .bl{font-weight:800;color:var(--g2)}.brow:last-child .bv{font-size:22px;font-weight:900;color:var(--g1)}
+
+/* SUCCESS */
+/* ── SUCCESS SCREEN ─────────────────────────────────────────────────────────── */
+.sucb{flex:1;display:flex;flex-direction:column;align-items:center;text-align:center;padding:48px 24px}
+.suci{width:88px;height:88px;border-radius:44px;background:var(--g4);display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:20px}
+.suct{font-size:26px;font-weight:900;color:var(--text);margin-bottom:8px;letter-spacing:-.3px}
+.sucx{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:28px}
+.sucd{background:#fff;border-radius:var(--r);padding:4px 16px;width:100%;box-shadow:var(--sh);margin-bottom:24px}
+.srow{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--off)}
+.srow:last-child{border:none}
+.sk{font-size:12px;color:var(--muted);font-weight:600}.sv{font-size:13px;font-weight:700;color:var(--text);text-align:right;max-width:56%}
+
+/* HOME */
+/* ── HOME HERO ──────────────────────────────────────────────────────────────── */
+.hhero{background:var(--g2);padding:52px 20px 0;flex-shrink:0}
+.htop{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.hgr{font-size:12px;color:rgba(255,255,255,.55);font-weight:700;letter-spacing:.5px}
+.hnm{font-size:26px;font-weight:900;color:#fff;letter-spacing:-.5px}
+.hlog{width:40px;height:40px;cursor:pointer}.hlog img{width:40px;height:40px;object-fit:contain}
+
+/* EMPTY */
+.empty{display:flex;flex-direction:column;align-items:center;padding:80px 24px;gap:10px}
+.empty-ic{font-size:56px}.empty-t{font-size:20px;font-weight:800;color:var(--text)}.empty-x{font-size:14px;color:var(--muted);text-align:center}
+
+/* TOAST */
+/* ── TOAST ──────────────────────────────────────────────────────────────────── */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(10px);background:var(--g3);color:#fff;padding:12px 20px;border-radius:12px;font-size:14px;font-weight:600;z-index:999;opacity:0;transition:all .3s;pointer-events:none;max-width:300px;text-align:center;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+
+/* ── RESPONSIVE & SAFE AREA ─────────────────────────────────────────────────── */
+/* ── RESPONSIVE & SAFE AREA ────────────────────────────────────────────── */
+
+/* iPhone notch / Dynamic Island / home indicator */
+#app {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+
+/* Status bar already has padding-top — don't double it */
+.status {
+  padding-top: max(14px, env(safe-area-inset-top, 14px));
+}
+
+/* Tab bar home-indicator clearance */
+.tabs {
+  padding-bottom: max(16px, env(safe-area-inset-bottom, 16px));
+}
+
+/* Very small phones (iPhone SE, 375px wide) */
+@media (max-width: 390px) {
+  .mc-name { font-size: 17px; }
+  .mc-pts  { font-size: 21px; }
+  .mc      { padding: 16px; }
+  .atit    { font-size: 24px; }
+  .hnm     { font-size: 22px; }
+  .page-head h1 { font-size: 20px; }
+  .qa-ic   { width: 50px; height: 50px; font-size: 20px; }
+  .qa-grid { gap: 6px; padding: 0 12px 4px; }
+  .td-sv   { font-size: 22px; }
+  .tdsv    { font-size: 22px; }
+  .pbig    { font-size: 38px; }
+  .lc-price, .lcprice { font-size: 24px; }
+  .sucb    { padding: 32px 16px; }
+  .suct    { font-size: 22px; }
+  .stgrid  { gap: 6px; padding: 12px; }
+  .stv     { font-size: 12px; }
+  .scroll  { -webkit-overflow-scrolling: touch; }
+  .gc      { padding: 12px; margin: 0 12px 8px; }
+  .tc      { margin: 0 12px 10px; }
+  .lc      { margin: 0 12px 10px; }
+  .tdw     { margin: 12px; }
+  .tdact   { padding: 0 12px 12px; }
+  .btn     { padding: 13px; font-size: 14px; }
+}
+
+/* Normal phones (390px – 430px) — default styles, no override needed */
+
+/* Large phones & small tablets (431px – 768px) */
+@media (min-width: 431px) and (max-width: 768px) {
+  #app { max-width: 100%; }
+  .qa-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Tablets (769px+) — 2-column layout for content */
+@media (min-width: 769px) {
+  #app { max-width: 480px; box-shadow: 0 0 60px rgba(0,0,0,.5); border-radius: 32px; margin: 20px auto; min-height: calc(100vh - 40px); }
+  body { background: #0A0E1A; align-items: center; min-height: 100vh; }
+  .status { border-radius: 32px 32px 0 0; }
+  .tabs   { border-radius: 0 0 32px 32px; }
+}
+
+/* Desktop (1024px+) — more pronounced phone frame */
+@media (min-width: 1024px) {
+  #app { max-width: 390px; box-shadow: 0 20px 80px rgba(0,0,0,.7), 0 0 0 8px #1c1c1e, 0 0 0 10px #3a3a3c; }
+  body { background: #0A0E1A; }
+}
+
+/* Landscape mode on phones */
+@media (max-height: 500px) and (orientation: landscape) {
+  .at    { padding: 20px 24px 12px; flex-direction: row; gap: 20px; align-items: center; }
+  .alo   { width: 60px; height: 60px; margin-bottom: 0; flex-shrink: 0; }
+  .alo img { width: 60px; height: 60px; }
+  .atit  { font-size: 22px; }
+  .asub  { font-size: 12px; }
+  .page-head { padding-top: 16px; }
+  .back-head { padding-top: 16px; }
+  .hhero     { padding-top: 16px; }
+  .prh       { padding-top: 20px; padding-bottom: 16px; }
+  .prof-head { padding-top: 20px; }
+  .mc        { margin-bottom: 12px; }
+}
+
+/* High-DPI / Retina — sharper borders */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .field input, .mr, .lc, .tc, .gc { border-width: 0.5px; }
+}
+
+/* Reduced motion — disable transitions for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  /* Keep the app's own dark/light design — only adjust outer background */
+  body { background: #000; }
+}
+50%) translateY(0)}

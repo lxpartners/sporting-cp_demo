@@ -1,0 +1,27 @@
+{
+  "expo": {
+    "name": "Sporting CP",
+    "slug": "sporting-cp-demo",
+    "version": "1.0.0",
+    "scheme": "sportingcp",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#006B38"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "pt.sportingcp.demo"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#006B38"
+      },
+      "package": "pt.sportingcp.demo"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-secure-store"
+    ]
+  }
+}
