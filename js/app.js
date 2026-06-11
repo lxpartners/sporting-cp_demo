@@ -299,38 +299,54 @@ function openSell(ticketId, price){
 function updateSellBreakdown(){
   const ticket = TICKETS.find(t=>t.id===sellTicketId);
   if(!ticket) return;
-  const val = parseFloat(document.getElementById('sell-price-input').value)||0;
-  const max = ticket.price;
-  const over = val > max;
+  const val    = parseFloat(document.getElementById('sell-price-input').value)||0;
+  const maxPrice = Math.round(ticket.price * PRICE_CAP_MULT * 100) / 100;
+  const over   = val > maxPrice;
   document.getElementById('sell-price-input').classList.toggle('over', over);
   document.getElementById('sell-price-error').style.display = over?'block':'none';
-  document.getElementById('sell-price-error').textContent = `Máximo permitido: ${max}€`;
-  document.getElementById('sell-submit-btn').disabled = over;
-  const commission = (val*0.05).toFixed(2);
-  const receives   = (val*0.95).toFixed(2);
+  document.getElementById('sell-price-error').textContent = `Máximo permitido: ${maxPrice}€ (20% acima do preço original)`;
+  document.getElementById('sell-submit-btn').disabled = over || val <= 0;
+  const commission = (val * COMMISSION).toFixed(2);
+  const receives   = (val * (1-COMMISSION)).toFixed(2);
+  // Waitlist hint
+  const waiters = WAITLIST.filter(w=>w.event_id===ticket.event_id).length;
   document.getElementById('sell-breakdown').innerHTML = `
     ${[
-      { l:'Preço original', v:`${max}€` },
-      { l:'Preço de venda', v:`${val}€` },
-      { l:'Comissão (5%)', v:`- ${commission}€` },
+      { l:'Preço original',          v:`${ticket.price}€` },
+      { l:'Preço máx. permitido',    v:`${maxPrice}€` },
+      { l:'Preço de venda',          v:`${val}€` },
+      { l:'Comissão Sporting (5%)',  v:`- ${commission}€` },
     ].map(r=>`<div class="bd-row"><span class="bd-label">${r.l}</span><span class="bd-value">${r.v}</span></div>`).join('')}
-    <div class="bd-row highlight"><span class="bd-label">Recebes</span><span class="bd-value">${receives}€</span></div>`;
+    <div class="bd-row highlight"><span class="bd-label">Recebes</span><span class="bd-value">${receives}€</span></div>
+    ${waiters>0?`<div class="waitlist-hint">⚡ ${waiters} sócio${waiters!==1?'s':''} em lista de espera para este jogo — match automático garantido!</div>`:''}
+    <div class="price-cap-notice">🛡️ O Sporting CP garante preços justos para todos os sócios</div>`;
 }
 
 function doSell(){
-  const ticket = TICKETS.find(t=>t.id===sellTicketId);
-  const price = parseFloat(document.getElementById('sell-price-input').value);
-  if(!ticket || price > ticket.price) return;
-  const listingId = 'l'+Date.now();
-  LISTINGS.push({ id:listingId, ticket_id:ticket.id, seller_id:currentUser.id, asking_price:price, original_price:ticket.price, status:'active' });
+  const ticket   = TICKETS.find(t=>t.id===sellTicketId);
+  const price    = parseFloat(document.getElementById('sell-price-input').value);
+  const maxPrice = Math.round(ticket.price * PRICE_CAP_MULT * 100) / 100;
+  if(!ticket || price > maxPrice || price <= 0) return;
+
+  LISTINGS.push({ id:'l'+Date.now(), ticket_id:ticket.id, seller_id:currentUser.id,
+    asking_price:price, original_price:ticket.price, status:'active', listed_at:Date.now() });
+
+  // Auto-match: verifica lista de espera para este jogo
+  const waiters = WAITLIST.filter(w=>w.event_id===ticket.event_id).length;
+  const autoMatch = waiters > 0;
+
   showSuccessScreen(
-    '🏪', 'Publicado!',
-    'O teu bilhete está agora no marketplace. Receberás uma notificação quando for vendido.',
+    autoMatch ? '⚡' : '🏪',
+    autoMatch ? 'Match Automático!' : 'Publicado!',
+    autoMatch
+      ? `<strong>${waiters} sócio${waiters!==1?'s':''}</strong> na lista de espera ${waiters===1?'foi notificado':'foram notificados'} automaticamente!`
+      : 'O teu bilhete está agora no marketplace. Receberás uma notificação quando for vendido.',
     [
-      { key:'Jogo', val: EVENTS.find(e=>e.id===ticket.event_id)?.name },
-      { key:'Lugar', val:`Sect. ${ticket.section} · Fila ${ticket.row} · Lugar ${ticket.seat}` },
-      { key:'Preço', val:`${price}€` },
-      { key:'Recebes', val:`${(price*0.95).toFixed(2)}€` },
+      { key:'Jogo',    val: EVENTS.find(e=>e.id===ticket.event_id)?.name },
+      { key:'Lugar',   val:`Sect. ${ticket.section} · Fila ${ticket.row} · Lugar ${ticket.seat}` },
+      { key:'Preço',   val:`${price}€` },
+      { key:'Recebes', val:`${(price*(1-COMMISSION)).toFixed(2)}€` },
+      ...(autoMatch ? [{ key:'Lista de espera', val:`${waiters} sócio${waiters!==1?'s':''} notificados` }] : []),
     ],
     ()=>goTab('marketplace')
   );
@@ -346,45 +362,126 @@ function delistTicket(ticketId){
 // ══════════════════════════════════════════════════════════
 // ── MARKETPLACE ─────────────────────────────────────────────────────────────
 function renderMarketplace(){
-  const active = LISTINGS.filter(l=>l.status==='active');
-  if(active.length === 0){
-    document.getElementById('marketplace-list').innerHTML = `<div style="text-align:center;padding:80px 20px"><div style="font-size:48px">🏪</div><div style="font-size:20px;font-weight:700;margin-top:12px">Sem anúncios</div><p style="color:var(--gray);margin-top:6px">Nenhum bilhete disponível de momento.</p></div>`;
-    return;
-  }
-  document.getElementById('marketplace-list').innerHTML = active.map(l=>{
-    const ticket = TICKETS.find(t=>t.id===l.ticket_id);
-    const ev     = EVENTS.find(e=>e.id===ticket.event_id);
-    const seller = MEMBERS.find(m=>m.id===l.seller_id);
-    const d      = new Date(ev.date+'T12:00:00');
-    const saving = (l.original_price - l.asking_price).toFixed(2);
-    const isOwn  = l.seller_id === currentUser.id;
-    return `<div class="listing-card">
-      <div class="lc-top">
-        <div>
-          <div class="lc-comp">${ev.competition}</div>
-          <div class="lc-match">${ev.home} vs ${ev.away}</div>
-          <div class="lc-meta">📅 ${d.toLocaleDateString('pt',{day:'numeric',month:'short'})} · ⏰ ${ev.time} · ${ev.venue.replace('Estádio de ','')}</div>
-        </div>
-        ${parseFloat(saving)>0?`<div class="saving-tag">- ${saving}€</div>`:''}
-      </div>
-      <div class="lc-body">
-        <div class="lc-seats">
-          ${[['Setor',ticket.section],['Fila',ticket.row],['Lugar',ticket.seat]].map(([lb,v])=>`<div class="seat-f"><div class="seat-lbl">${lb}</div><div class="seat-val">${v}</div></div>`).join('')}
-        </div>
-        <div class="lc-price-row">
-          <div class="lc-seller">Vendido por<strong>${isOwn?'Tu ('+seller.full_name+')':seller.full_name}</strong></div>
-          <div>
-            <div class="lc-price">${l.asking_price}€</div>
-            ${parseFloat(saving)>0?`<div class="lc-orig">${l.original_price}€</div>`:''}
+  const active    = LISTINGS.filter(l=>l.status==='active');
+  const now       = Date.now();
+  const userTier  = currentUser.tier;
+  const userDelay = TIER_DELAY[userTier] * 60000; // ms
+
+  // ── Listing cards ──────────────────────────────────────────────
+  const listingsHtml = active.length === 0
+    ? `<div style="text-align:center;padding:60px 20px"><div style="font-size:48px">🏪</div>
+       <div style="font-size:20px;font-weight:700;margin-top:12px">Sem anúncios</div>
+       <p style="color:var(--muted);margin-top:6px">Nenhum bilhete disponível de momento.</p></div>`
+    : active.map(l=>{
+        const ticket = TICKETS.find(t=>t.id===l.ticket_id);
+        const ev     = EVENTS.find(e=>e.id===ticket.event_id);
+        const seller = MEMBERS.find(m=>m.id===l.seller_id);
+        const d      = new Date(ev.date+'T12:00:00');
+        const saving = (l.original_price - l.asking_price).toFixed(2);
+        const isOwn  = l.seller_id === currentUser.id;
+
+        // Tier priority: quando fica disponível para o utilizador atual
+        const listedAt    = l.listed_at || now;
+        const availableAt = listedAt + userDelay;
+        const isAvailable = now >= availableAt || isOwn;
+        const waitMins    = Math.ceil((availableAt - now) / 60000);
+
+        // Barra de acesso por escalão
+        const tierOrder = ['platinum','gold','silver','bronze'];
+        const tierLabels = { platinum:'Platinum', gold:'Gold', silver:'Silver', bronze:'Bronze' };
+        const tierBar = tierOrder.map(tier=>{
+          const delay       = TIER_DELAY[tier] * 60000;
+          const available   = now >= (listedAt + delay);
+          const isUser      = tier === userTier;
+          const minsLeft    = Math.ceil(((listedAt + delay) - now) / 60000);
+          const label       = available ? 'Agora' : minsLeft+'min';
+          return `<div class="tier-slot ${available?'tier-open':'tier-wait'}${isUser?' tier-mine':''}">
+            <div class="tier-slot-name">${tierLabels[tier]}</div>
+            <div class="tier-slot-label ${available?'':'tier-slot-locked'}">${available?'✓':'🔒'} ${label}</div>
+          </div>`;
+        }).join('');
+
+        // Rating do vendedor
+        const ratingHtml = isOwn ? '' : seller.sales > 0
+          ? `<span class="seller-stars">${'★'.repeat(Math.round(seller.rating))}${'☆'.repeat(5-Math.round(seller.rating))}</span>
+             <span class="seller-rating-num">${seller.rating}</span>
+             <span class="seller-sales">(${seller.sales} transações)</span>`
+          : `<span class="seller-new">Novo vendedor</span>`;
+
+        return `<div class="listing-card${isAvailable?'':' listing-locked'}">
+          <div class="lc-top">
+            <div>
+              <div class="lc-comp">${ev.competition}</div>
+              <div class="lc-match">${ev.home} vs ${ev.away}</div>
+              <div class="lc-meta">📅 ${d.toLocaleDateString('pt',{day:'numeric',month:'short'})} · ⏰ ${ev.time}</div>
+            </div>
+            ${parseFloat(saving)>0?`<div class="saving-tag">- ${saving}€</div>`:''}
           </div>
-        </div>
-        ${isOwn
-          ? `<button class="btn-outline" onclick="delistListing('${l.id}')">Retirar anúncio</button>`
-          : `<button class="buy-btn" onclick="buyListing('${l.id}')">Comprar Bilhete — ${l.asking_price}€</button>`
-        }
+
+          <div class="tier-access-bar">
+            <div class="tier-bar-label">Acesso por escalão</div>
+            <div class="tier-slots">${tierBar}</div>
+          </div>
+
+          <div class="lc-body">
+            <div class="lc-seats">
+              ${[['Setor',ticket.section],['Fila',ticket.row],['Lugar',ticket.seat]].map(([lb,v])=>`<div class="seat-f"><div class="seat-lbl">${lb}</div><div class="seat-val">${v}</div></div>`).join('')}
+            </div>
+            <div class="lc-price-row">
+              <div class="lc-seller">
+                <div>Por <strong>${isOwn?'ti':seller.full_name}</strong></div>
+                ${ratingHtml ? `<div class="seller-rating-row">${ratingHtml}</div>` : ''}
+              </div>
+              <div>
+                <div class="lc-price">${l.asking_price}€</div>
+                ${parseFloat(saving)>0?`<div class="lc-orig">${l.original_price}€</div>`:''}
+              </div>
+            </div>
+            ${isOwn
+              ? `<button class="btn-outline" onclick="delistListing('${l.id}')">Retirar anúncio</button>`
+              : isAvailable
+                ? `<button class="buy-btn" onclick="buyListing('${l.id}')">Comprar — ${l.asking_price}€</button>`
+                : `<div class="locked-msg">🔒 Disponível para ${tierLabels[userTier]} em <strong>${waitMins} min</strong></div>`
+            }
+          </div>
+        </div>`;
+      }).join('');
+
+  // ── Lista de espera ────────────────────────────────────────────
+  const myWaitlist        = WAITLIST.filter(w=>w.member_id===currentUser.id);
+  const eventsWithoutTicket = EVENTS.filter(ev=>
+    !TICKETS.some(t=>t.event_id===ev.id&&t.holder===currentUser.id&&t.status==='issued')
+  );
+
+  const waitlistHtml = `
+    <div class="waitlist-section">
+      <div class="wl-section-title">📋 Lista de Espera</div>
+      <p class="wl-section-sub">Para jogos esgotados — és notificado automaticamente quando um bilhete aparecer.</p>
+      <div class="wl-list">
+        ${eventsWithoutTicket.map(ev=>{
+          const d          = new Date(ev.date+'T12:00:00');
+          const isWaiting  = myWaitlist.some(w=>w.event_id===ev.id);
+          const totalWait  = WAITLIST.filter(w=>w.event_id===ev.id).length;
+          const myPos      = WAITLIST.find(w=>w.event_id===ev.id&&w.member_id===currentUser.id)?.position;
+          return `<div class="wl-card">
+            <div class="wl-info">
+              <div class="wl-match">vs ${ev.away}</div>
+              <div class="wl-date">📅 ${d.toLocaleDateString('pt',{day:'numeric',month:'short'})}</div>
+              ${totalWait>0?`<div class="wl-count">👥 ${totalWait} à espera</div>`:''}
+            </div>
+            ${isWaiting
+              ? `<div class="wl-waiting">
+                   <div class="wl-pos">#${myPos||'?'}</div>
+                   <button class="wl-leave-btn" onclick="leaveWaitlist('${ev.id}')">Sair</button>
+                 </div>`
+              : `<button class="wl-join-btn" onclick="joinWaitlist('${ev.id}')">+ Entrar</button>`
+            }
+          </div>`;
+        }).join('')}
       </div>
     </div>`;
-  }).join('');
+
+  document.getElementById('marketplace-list').innerHTML = listingsHtml + waitlistHtml;
 }
 
 function buyListing(listingId){
@@ -409,6 +506,28 @@ function buyListing(listingId){
 function delistListing(listingId){
   const l = LISTINGS.find(x=>x.id===listingId);
   if(l){ l.status='cancelled'; showToast('Anúncio removido'); renderMarketplace(); }
+}
+
+// ── LISTA DE ESPERA ──────────────────────────────────────────────────────────
+function joinWaitlist(eventId){
+  if(WAITLIST.some(w=>w.event_id===eventId&&w.member_id===currentUser.id)){
+    showToast('Já estás na lista de espera'); return;
+  }
+  const position = WAITLIST.filter(w=>w.event_id===eventId).length + 1;
+  WAITLIST.push({ id:'w'+Date.now(), event_id:eventId, member_id:currentUser.id, joined_at:Date.now(), position });
+  const ev = EVENTS.find(e=>e.id===eventId);
+  showToast(`✅ Na lista de espera para ${ev.away} — posição #${position}`);
+  renderMarketplace();
+}
+
+function leaveWaitlist(eventId){
+  const idx = WAITLIST.findIndex(w=>w.event_id===eventId&&w.member_id===currentUser.id);
+  if(idx >= 0){
+    WAITLIST.splice(idx, 1);
+    WAITLIST.filter(w=>w.event_id===eventId).forEach((w,i)=>{ w.position = i+1; });
+    showToast('Removido da lista de espera');
+    renderMarketplace();
+  }
 }
 
 // ══════════════════════════════════════════════════════════

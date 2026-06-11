@@ -335,4 +335,47 @@ body{display:flex;justify-content:center;font-family:-apple-system,BlinkMacSyste
   /* Keep the app's own dark/light design — only adjust outer background */
   body { background: #000; }
 }
-50%) translateY(0)}
+
+/* ── TIER PRIORITY ACCESS BAR ──────────────────────────────────────────────── */
+.tier-access-bar{background:#F0F9F5;border:1px solid #C3E6D8;border-radius:10px;padding:10px 14px;margin:10px 0}
+.tier-bar-label{font-size:10px;font-weight:700;color:var(--g2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px}
+.tier-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tier-slot{background:#fff;border:1.5px solid var(--border);border-radius:8px;padding:6px 4px;text-align:center;transition:all .2s}
+.tier-slot-name{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.tier-slot-label{font-size:10px;font-weight:700;color:var(--muted)}
+.tier-open .tier-slot-label{color:var(--g1)}
+.tier-open{border-color:#C3E6D8;background:#F0F9F5}
+.tier-mine{border-color:var(--g1)!important;box-shadow:0 0 0 2px rgba(0,136,99,.15)}
+.tier-mine .tier-slot-name{color:var(--g1)}
+.tier-slot-locked{color:#B0B8C1}
+
+/* ── LISTING LOCKED STATE ──────────────────────────────────────────────────── */
+.listing-locked{opacity:.85}
+.locked-msg{background:#FFF8E6;border:1.5px solid #F0C050;border-radius:10px;padding:12px 14px;font-size:13px;color:#7A5C00;text-align:center;margin-top:8px}
+
+/* ── SELLER RATING ─────────────────────────────────────────────────────────── */
+.seller-rating-row{display:flex;align-items:center;gap:4px;margin-top:2px;flex-wrap:wrap}
+.seller-stars{color:#F0A500;font-size:12px;letter-spacing:1px}
+.seller-rating-num{font-size:12px;font-weight:700;color:var(--text)}
+.seller-sales{font-size:11px;color:var(--muted)}
+.seller-new{font-size:11px;color:var(--muted);font-style:italic}
+
+/* ── WAITLIST SECTION ──────────────────────────────────────────────────────── */
+.waitlist-section{margin:20px 0 8px}
+.wl-section-title{font-size:15px;font-weight:800;color:var(--g2);margin-bottom:4px}
+.wl-section-sub{font-size:12px;color:var(--muted);margin-bottom:12px;line-height:1.5}
+.wl-list{display:flex;flex-direction:column;gap:8px}
+.wl-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.wl-info{flex:1;min-width:0}
+.wl-match{font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wl-date{font-size:12px;color:var(--muted);margin-top:2px}
+.wl-count{font-size:11px;color:var(--g1);font-weight:600;margin-top:3px}
+.wl-waiting{display:flex;align-items:center;gap:8px}
+.wl-pos{background:var(--g1);color:#fff;font-size:11px;font-weight:800;padding:4px 8px;border-radius:20px;white-space:nowrap}
+.wl-join-btn{background:var(--g1);color:#fff;border:none;border-radius:20px;padding:8px 14px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.wl-join-btn:active{opacity:.8}
+.wl-leave-btn{background:#fff;color:var(--muted);border:1.5px solid var(--border);border-radius:20px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* ── SELL SCREEN EXTRAS ─────────────────────────────────────────────────────── */
+.waitlist-hint{background:#E8F5E9;border:1.5px solid #81C784;border-radius:8px;padding:10px 12px;font-size:12px;color:#2E7D32;margin:8px 0;text-align:center}
+.price-cap-notice{background:#F0F9F5;border-radius:8px;padding:10px 12px;font-size:11px;color:var(--g2);text-align:center;margin-top:6px;font-weight:600}

@@ -1,17 +1,13 @@
 // ─────────────────────────────────────────────────────────────
 // data.js  —  Dados de demo (membros, eventos, bilhetes)
-// Para ligar ao backend real: substituir por chamadas fetch()
 // ─────────────────────────────────────────────────────────────
 
-// ══════════════════════════════════════════════════════════
-// DATA STORE
-// ══════════════════════════════════════════════════════════
 const MEMBERS = [
-  { id:'m1', member_number:'004728391', full_name:'André Domingues', email:'andre@demo.pt', password:'sporting123', tier:'gold',     points:2840, member_since:'2008-03-15' },
-  { id:'m2', member_number:'004821002', full_name:'João Matos',       email:'joao@demo.pt',  password:'sporting123', tier:'silver',   points:1200, member_since:'2012-09-01' },
-  { id:'m3', member_number:'003991241', full_name:'Rui Pereira',      email:'rui@demo.pt',   password:'sporting123', tier:'platinum', points:5100, member_since:'2001-07-22' },
-  { id:'m4', member_number:'005103887', full_name:'Maria Santos',     email:'maria@demo.pt', password:'sporting123', tier:'bronze',   points: 640, member_since:'2019-01-10' },
-  { id:'m5', member_number:'006234518', full_name:'Ana Costa',        email:'ana@demo.pt',   password:'sporting123', tier:'bronze',   points: 320, member_since:'2022-06-05' },
+  { id:'m1', member_number:'004728391', full_name:'André Domingues', email:'andre@demo.pt', password:'sporting123', tier:'gold',     points:2840, member_since:'2008-03-15', rating:4.9, sales:12 },
+  { id:'m2', member_number:'004821002', full_name:'João Matos',       email:'joao@demo.pt',  password:'sporting123', tier:'silver',   points:1200, member_since:'2012-09-01', rating:4.6, sales:5  },
+  { id:'m3', member_number:'003991241', full_name:'Rui Pereira',      email:'rui@demo.pt',   password:'sporting123', tier:'platinum', points:5100, member_since:'2001-07-22', rating:5.0, sales:31 },
+  { id:'m4', member_number:'005103887', full_name:'Maria Santos',     email:'maria@demo.pt', password:'sporting123', tier:'bronze',   points: 640, member_since:'2019-01-10', rating:4.2, sales:2  },
+  { id:'m5', member_number:'006234518', full_name:'Ana Costa',        email:'ana@demo.pt',   password:'sporting123', tier:'bronze',   points: 320, member_since:'2022-06-05', rating:0,   sales:0  },
 ];
 
 const EVENTS = [
@@ -30,7 +26,25 @@ let TICKETS = [
   { id:'t6', event_id:'e4', original:'m3', holder:'m3', section:'14', row:'D', seat:'9',  price:20, status:'issued' },
 ];
 
+// listed_at simula quando o bilhete foi publicado (para lógica de prioridade por escalão)
+// l1: publicado há 20min → disponível para Gold, mas não Silver/Bronze ainda
+// l2: publicado há 5min  → só Platinum vê agora
 let LISTINGS = [
-  { id:'l1', ticket_id:'t5', seller_id:'m3', asking_price:22, original_price:25, status:'active' },
-  { id:'l2', ticket_id:'t6', seller_id:'m3', asking_price:18, original_price:20, status:'active' },
+  { id:'l1', ticket_id:'t5', seller_id:'m3', asking_price:22, original_price:25, status:'active', listed_at: Date.now() - 20*60*1000 },
+  { id:'l2', ticket_id:'t6', seller_id:'m3', asking_price:18, original_price:20, status:'active', listed_at: Date.now() -  5*60*1000 },
 ];
+
+// Lista de espera por jogo
+let WAITLIST = [
+  { id:'w1', event_id:'e1', member_id:'m4', joined_at: Date.now() - 3600000, position:1 },
+  { id:'w2', event_id:'e1', member_id:'m5', joined_at: Date.now() - 1800000, position:2 },
+  { id:'w3', event_id:'e2', member_id:'m2', joined_at: Date.now() - 7200000, position:1 },
+];
+
+// ── Regras do marketplace ─────────────────────────────────────
+// Minutos de espera por escalão antes de um anúncio ficar visível
+const TIER_DELAY = { platinum:0, gold:15, silver:30, bronze:45 };
+// Preço máximo de revenda = preço original × 1.20 (máx 20% de markup)
+const PRICE_CAP_MULT = 1.20;
+// Comissão do clube sobre cada venda
+const COMMISSION = 0.05;
