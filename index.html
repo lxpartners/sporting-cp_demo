@@ -1373,7 +1373,12 @@ openTicketDetail=function(ticketId){
       <div class="tdi"><span>📅 ${d.toLocaleDateString('pt',{weekday:'short',day:'numeric',month:'long'})}</span><span>⏰ ${ev.time}</span><span>🏟 ${ev.venue}</span></div>
     </div>
     <div class="tdsep"><div class="tdsep-c"></div><div class="tdsep-l"></div><div class="tdsep-c"></div></div>
-    <div class="tdseat">${[['SETOR',t.section],['FILA',t.row],['LUGAR',t.seat]].map(([l,v])=>`<div class="tdsf"><div class="tdsl">${l}</div><div class="tdsv">${v}</div></div>`).join('')}</div>
+    <div class="td-seats-big">
+      <div class="td-seat-big"><div class="td-seat-big-lbl">Setor</div><div class="td-seat-big-val">${t.section}</div></div>
+      <div class="td-seat-big"><div class="td-seat-big-lbl">Fila</div><div class="td-seat-big-val">${t.row}</div></div>
+      <div class="td-seat-big gold-seat"><div class="td-seat-big-lbl">Lugar</div><div class="td-seat-big-val">${t.seat}</div></div>
+    </div>
+    ${renderStadiumMap(t.section, t.row, t.seat)}
     <div class="qrz"><div id="qr-canvas"></div><div class="qref">SCP-${t.id.toUpperCase()}-${nonce()}</div></div>
     <div class="tdact">
       ${isListed
