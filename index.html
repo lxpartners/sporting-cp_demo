@@ -386,6 +386,19 @@ body{display:flex;justify-content:center;font-family:-apple-system,BlinkMacSyste
 .waitlist-hint{background:#E8F5E9;border:1.5px solid #81C784;border-radius:8px;padding:10px 12px;font-size:12px;color:#2E7D32;margin:8px 0;text-align:center}
 .price-cap-notice{background:#F0F9F5;border-radius:8px;padding:10px 12px;font-size:11px;color:var(--g2);text-align:center;margin-top:6px;font-weight:600}
 
+/* ── STADIUM MAP ─────────────────────────────────────────────────────────────── */
+.stadium-map-wrap{background:#0D1117;border-radius:16px;padding:16px;margin:12px 0}
+.stadium-map-title{font-size:12px;font-weight:700;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.8px;text-align:center;margin-bottom:10px}
+.stadium-legend{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:10px;font-size:11px;color:rgba(255,255,255,.5)}
+.legend-dot{width:10px;height:10px;background:#F0A500;border-radius:2px;display:inline-block}
+
+/* ── SEAT HIGHLIGHT ──────────────────────────────────────────────────────────── */
+.td-seats-big{display:flex;gap:8px;justify-content:center;margin:14px 0}
+.td-seat-big{flex:1;background:var(--g3);border-radius:12px;padding:12px 6px;text-align:center}
+.td-seat-big-lbl{font-size:9px;font-weight:700;text-transform:uppercase;color:rgba(255,255,255,.5);letter-spacing:.8px;margin-bottom:4px}
+.td-seat-big-val{font-size:28px;font-weight:900;color:#fff;line-height:1}
+.td-seat-big.gold-seat{background:var(--gold);}.td-seat-big.gold-seat .td-seat-big-lbl{color:rgba(0,0,0,.5)}.td-seat-big.gold-seat .td-seat-big-val{color:#1A1A1A}
+
 50%) translateY(0)}
 
   
@@ -783,6 +796,96 @@ function renderTickets(){
 // ══════════════════════════════════════════════════════════
 // TICKET DETAIL + QR
 // ══════════════════════════════════════════════════════════
+function renderStadiumMap(sectionNum) {
+  const sec = parseInt(sectionNum) || 0;
+  let stand, pos;
+  if      (sec >= 1  && sec <= 7)  { stand='norte';    pos=sec-1; }
+  else if (sec >= 8  && sec <= 14) { stand='poente';   pos=sec-8; }
+  else if (sec >= 15 && sec <= 21) { stand='sul';      pos=21-sec; }
+  else                             { stand='nascente'; pos=Math.min(28-sec,6); }
+
+  const standNames = { norte:'Bancada Norte', poente:'Bancada Poente', sul:'Bancada Sul', nascente:'Bancada Nascente' };
+  const COUNT = 7;
+  // Layout constants
+  const W=300,H=210;
+  const px=75,py=50,pw=150,ph=110;   // pitch
+  const nY=18,nH=28;                  // norte stand y/h
+  const sY=168,sH=28;                 // sul
+  const pX=18,pW=50;                  // poente
+  const nX=232,nW=50;                 // nascente
+
+  function hsl(isHighlight){ return isHighlight ? '#F0A500' : '#1a5c3a'; }
+
+  let sects='';
+  for(let i=0;i<COUNT;i++){
+    const hi=i===pos;
+    // Norte (top, horizontal)
+    if(stand==='norte'){
+      const x=px+i*(pw/COUNT)+1, y=nY+1, w=pw/COUNT-2, h=nH-2;
+      sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${hsl(hi)}" rx="2"/>`;
+      if(hi) sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#fff" stroke-width="1.5" rx="2"/>`;
+    } else {
+      sects+=`<rect x="${px+i*(pw/COUNT)+1}" y="${nY+1}" width="${pw/COUNT-2}" height="${nH-2}" fill="#1a5c3a" rx="2" opacity=".7"/>`;
+    }
+    // Sul (bottom, horizontal, reversed)
+    const si=COUNT-1-i;
+    if(stand==='sul'){
+      const x=px+i*(pw/COUNT)+1, y=sY+1, w=pw/COUNT-2, h=sH-2;
+      const hiS=si===pos;
+      sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${hsl(hiS)}" rx="2"/>`;
+      if(hiS) sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#fff" stroke-width="1.5" rx="2"/>`;
+    } else {
+      sects+=`<rect x="${px+i*(pw/COUNT)+1}" y="${sY+1}" width="${pw/COUNT-2}" height="${sH-2}" fill="#1a5c3a" rx="2" opacity=".7"/>`;
+    }
+    // Poente (left, vertical)
+    if(stand==='poente'){
+      const x=pX+1, y=py+i*(ph/COUNT)+1, w=pW-2, h=ph/COUNT-2;
+      const hiP=i===pos;
+      sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${hsl(hiP)}" rx="2"/>`;
+      if(hiP) sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#fff" stroke-width="1.5" rx="2"/>`;
+    } else {
+      sects+=`<rect x="${pX+1}" y="${py+i*(ph/COUNT)+1}" width="${pW-2}" height="${ph/COUNT-2}" fill="#1a5c3a" rx="2" opacity=".7"/>`;
+    }
+    // Nascente (right, vertical)
+    if(stand==='nascente'){
+      const x=nX+1, y=py+i*(ph/COUNT)+1, w=nW-2, h=ph/COUNT-2;
+      const hiN=i===pos;
+      sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${hsl(hiN)}" rx="2"/>`;
+      if(hiN) sects+=`<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="#fff" stroke-width="1.5" rx="2"/>`;
+    } else {
+      sects+=`<rect x="${nX+1}" y="${py+i*(ph/COUNT)+1}" width="${nW-2}" height="${ph/COUNT-2}" fill="#1a5c3a" rx="2" opacity=".7"/>`;
+    }
+  }
+
+  return `<div class="stadium-map-wrap">
+    <div class="stadium-map-title">📍 ${standNames[stand]} · Setor ${sectionNum}</div>
+    <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+      <rect width="${W}" height="${H}" fill="#0D1117"/>
+      <!-- Stands background -->
+      <rect x="${px}" y="${nY}" width="${pw}" height="${nH}" fill="#0f2d1e" rx="3"/>
+      <rect x="${px}" y="${sY}" width="${pw}" height="${sH}" fill="#0f2d1e" rx="3"/>
+      <rect x="${pX}" y="${py}" width="${pW}" height="${ph}" fill="#0f2d1e" rx="3"/>
+      <rect x="${nX}" y="${py}" width="${nW}" height="${ph}" fill="#0f2d1e" rx="3"/>
+      <!-- Sections -->
+      ${sects}
+      <!-- Pitch -->
+      <rect x="${px}" y="${py}" width="${pw}" height="${ph}" fill="#2d8a4e" rx="2"/>
+      <rect x="${px}" y="${py}" width="${pw}" height="${ph}" fill="none" stroke="rgba(255,255,255,.5)" stroke-width="1.5" rx="2"/>
+      <line x1="${px+pw/2}" y1="${py}" x2="${px+pw/2}" y2="${py+ph}" stroke="rgba(255,255,255,.35)" stroke-width="1"/>
+      <circle cx="${px+pw/2}" cy="${py+ph/2}" r="16" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1"/>
+      <circle cx="${px+pw/2}" cy="${py+ph/2}" r="2" fill="rgba(255,255,255,.5)"/>
+      <rect x="${px}" y="${py+ph/2-18}" width="22" height="36" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+      <rect x="${px+pw-22}" y="${py+ph/2-18}" width="22" height="36" fill="none" stroke="rgba(255,255,255,.3)" stroke-width="1"/>
+      <!-- Labels -->
+      <text x="${px+pw/2}" y="${nY-4}" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8" font-family="sans-serif">NORTE</text>
+      <text x="${px+pw/2}" y="${sY+sH+12}" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="8" font-family="sans-serif">SUL</text>
+      <text x="${pX+pW/2}" y="${py+ph/2+3}" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="7" font-family="sans-serif" transform="rotate(-90,${pX+pW/2},${py+ph/2})">POENTE</text>
+      <text x="${nX+nW/2}" y="${py+ph/2+3}" text-anchor="middle" fill="rgba(255,255,255,.4)" font-size="7" font-family="sans-serif" transform="rotate(90,${nX+nW/2},${py+ph/2})">NASCENTE</text>
+    </svg>
+    <div class="stadium-legend"><span class="legend-dot"></span> O teu lugar — Setor ${sectionNum}</div>
+  </div>`;
+}
+
 function openTicketDetail(ticketId){
   activeTicketId = ticketId;
   const t  = TICKETS.find(x=>x.id===ticketId);
@@ -810,9 +913,12 @@ function openTicketDetail(ticketId){
       </div>
     </div>
     <div class="perforation"><div class="perf-circle"></div><div class="perf-line"></div><div class="perf-circle"></div></div>
-    <div class="td-seats">
-      ${[['SETOR',t.section],['FILA',t.row],['LUGAR',t.seat]].map(([l,v])=>`<div class="td-seat"><div class="td-seat-lbl">${l}</div><div class="td-seat-val">${v}</div></div>`).join('')}
+    <div class="td-seats-big">
+      <div class="td-seat-big"><div class="td-seat-big-lbl">Setor</div><div class="td-seat-big-val">${t.section}</div></div>
+      <div class="td-seat-big"><div class="td-seat-big-lbl">Fila</div><div class="td-seat-big-val">${t.row}</div></div>
+      <div class="td-seat-big gold-seat"><div class="td-seat-big-lbl">Lugar</div><div class="td-seat-big-val">${t.seat}</div></div>
     </div>
+    ${renderStadiumMap(t.section)}
     <div class="qr-area">
       <div id="qr-canvas"></div>
       <div class="ticket-ref">SCP-${t.id.toUpperCase()}-${nonce()}</div>
